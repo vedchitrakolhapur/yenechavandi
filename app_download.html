@@ -1,0 +1,114 @@
+
+    <!DOCTYPE html>
+    <html lang="mr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Download App - रामनगर ग्रामपंचायत, गडहिंग्लज</title>
+        <meta name="theme-color" content="#FF9933">
+        <link rel="manifest" href="manifest.json">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%); margin: 0; padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+            .app-card { background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 400px; width: 100%; border-top: 5px solid #FF9933; }
+            .app-icon { width: 120px; height: 120px; object-fit: contain; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; background:white; padding:5px; }
+            h1 { color: #000080; margin: 10px 0; font-size: 24px; }
+            p { color: #666; font-size: 16px; margin-bottom: 30px; }
+            
+            .install-btn { background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; text-decoration:none; }
+            .install-btn:hover { transform: translateY(-3px); background: #218838; }
+            
+            .share-label { font-size: 14px; font-weight: bold; color: #555; margin-bottom: 15px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+            .share-buttons { display: flex; justify-content: center; gap: 20px; }
+            .share-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+            .share-btn:hover { transform: translateY(-3px); }
+            .wa { background: #25D366; }
+            .fb { background: #1877F2; }
+            .copy { background: #555; }
+
+            /* Instructions */
+            .instructions { margin-top: 30px; font-size: 13px; color: #777; background: #f9f9f9; padding: 15px; border-radius: 10px; text-align: left; }
+            .instructions ol { padding-left: 20px; margin: 5px 0; }
+            .instructions li { margin-bottom: 5px; }
+        </style>
+    </head>
+    <body>
+        <div class="app-card">
+            <img src="https://basegp.bizc.in/assets/gp3379347.webp" alt="App Icon" class="app-icon">
+            <h1>रामनगर ग्रामपंचायत, गडहिंग्लज</h1>
+            <p>Ramnagar Grampanchayat, Gadhinglaj</p>
+            
+            <button id="pwaInstallBtn" class="install-btn" style="display:none;">
+                <i class="fas fa-download"></i> Install App Now
+            </button>
+            <div id="iosMsg" style="display:none; color:#d32f2f; font-weight:bold; margin-bottom:20px;">iOS वापरकर्त्यांसाठी: Share बटण दाबून 'Add to Home Screen' निवडा.</div>
+
+            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+            <span class="share-label">Share App With Others</span>
+            <div class="share-buttons">
+                <a href="#" id="shareWa" class="share-btn wa"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" id="shareFb" class="share-btn fb"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" id="shareCopy" class="share-btn copy" title="Copy Link"><i class="fas fa-link"></i></a>
+            </div>
+
+            <div class="instructions">
+                <strong><i class="fas fa-info-circle"></i> इन्स्टॉल कसे करावे?</strong>
+                <ol>
+                    <li>वरील 'Install App Now' बटणावर क्लिक करा.</li>
+                    <li>Install पॉप-अप आल्यावर 'Install' निवडा.</li>
+                    <li>ॲप तुमच्या मोबाइलच्या होम स्क्रीनवर येईल.</li>
+                </ol>
+            </div>
+        </div>
+
+        <script>
+            // Share Logic
+            var pageUrl = window.location.href;
+            var shareText = "आमच्या गावचे अधिकृत ॲप डाऊनलोड करा: " + pageUrl;
+            
+            document.getElementById('shareWa').href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareText);
+            document.getElementById('shareFb').href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(pageUrl);
+            
+            document.getElementById('shareCopy').onclick = function() {
+                navigator.clipboard.writeText(pageUrl);
+                alert("लिंक कॉपी झाली!");
+            };
+
+            // PWA Install Logic
+            let deferredPrompt;
+            const installBtn = document.getElementById('pwaInstallBtn');
+            const iosMsg = document.getElementById('iosMsg');
+
+            // Check if iOS
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if(isIos) {
+                iosMsg.style.display = 'block';
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.style.display = 'flex'; // Show button
+            });
+
+            installBtn.addEventListener('click', (e) => {
+                installBtn.style.display = 'none';
+                if(deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        deferredPrompt = null;
+                    });
+                }
+            });
+            
+            // If already installed or logic fails, show button anyway but it might not work perfectly on all browsers without event
+            if(!isIos && !window.matchMedia('(display-mode: standalone)').matches) {
+                 setTimeout(() => { 
+                    if(installBtn.style.display === 'none') installBtn.style.display = 'flex'; 
+                 }, 2000);
+            }
+        </script>
+    </body>
+    </html>
+    
